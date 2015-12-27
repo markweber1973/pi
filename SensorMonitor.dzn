@@ -1,0 +1,82 @@
+interface ISensorMonitor
+{
+  in void enable();
+  in void disable();
+
+  out void triggerDetected();
+  
+  behaviour
+  {
+    enum State { Disabled, Enabled };
+    State state = State.Disabled;
+
+    [state.Disabled]
+    {
+      on enable:        state = State.Enabled;
+      on disable:       illegal;
+    }
+    [state.Enabled]
+    {
+      on enable:        illegal;
+      on disable:       state = State.Disabled;
+      on optional:      triggerDetected;
+    }
+  }
+}
+
+interface ISensor
+{
+  in void enable();
+  in void disable();
+
+  out void triggered();
+
+  behaviour
+  {
+    enum State { Disabled, Enabled, Triggered };
+    State state = State.Disabled;
+
+    [state.Disabled]
+    {
+      on enable:        state = State.Enabled;
+      on disable:       illegal;
+    }
+    [state.Enabled]
+    {
+      on enable:        illegal;
+      on disable:       state = State.Disabled;
+      on optional:    { triggered; state = State.Triggered; }
+    }
+
+    [state.Triggered]
+    {
+      on enable:        illegal;
+      on disable:       state = State.Disabled;
+    }
+  }
+}
+
+component SensorMonitor
+{
+    provides ISensorMonitor sensorMonitorProvided;
+    requires ISensor sensorRequired;
+   
+  behaviour
+  {
+    enum State { Disabled, Enabled };
+    State state = State.Disabled;
+
+    [state.Disabled]
+    {
+      on sensorMonitorProvided.enable():  { sensorRequired.enable(); state = State.Enabled; }
+      on sensorMonitorProvided.disable(): illegal;
+	  on sensorRequired.triggered(): illegal;
+    }
+    [state.Enabled]
+    {
+      on sensorMonitorProvided.enable():  illegal;
+      on sensorMonitorProvided.disable(): { sensorRequired.disable(); state = State.Disabled;}
+      on sensorRequired.triggered():    {sensorMonitorProvided.triggerDetected(); state = State.Enabled;}
+    }
+  }
+}

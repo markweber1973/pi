@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="Sensor" Database="Sensor.tags">
+  <Project Name="Sensor" Path="Sensor.project" Active="Yes"/>
+  <Project Name="pirEvent" Path="../pirEvent/pirEvent.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="Sensor" ConfigName="Debug"/>
+      <Project Name="pirEvent" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="Sensor" ConfigName="Release"/>
+      <Project Name="pirEvent" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
