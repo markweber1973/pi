@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
  
 void sigterm(int signum) { std::cout << "sigterm"; }
 const int pin = 11;
@@ -20,6 +21,25 @@ void wPiTriggered(void)
 { 
   std::cout << "wPiTriggered"; 
   mySensorMonitor->sensorRequired.out.triggered();      
+}
+
+const std::string currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
+
+void TakePicture()
+{
+  std::string raspiString;
+  
+  std::ostringstream stringStream;
+  stringStream << "raspistill -o /home/pi/stills/" << currentDateTime() << ".jpg";
+  system(stringStream.str().c_str()); 
 }
 
 int main(int argc, char **argv)
@@ -41,6 +61,7 @@ int main(int argc, char **argv)
 
   mySensorMonitor->sensorMonitorProvided.out.triggerDetected = []{
     std::cout << "sensorMonitorProvided.out.triggerDetected" << std::endl;
+    TakePicture();
   };  
 
   mySensorMonitor->sensorRequired.in.enable = []{
@@ -56,7 +77,7 @@ int main(int argc, char **argv)
   getchar();
 
   mySensorMonitor->sensorMonitorProvided.in.disable();
-   
+  
   std::cout << "END" << std::endl;    
 	return 0;
 }
