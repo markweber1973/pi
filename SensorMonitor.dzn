@@ -208,7 +208,7 @@ component MotionTriggeredCam
   }  
 }
 
-component TheCam
+component TheCam 
 {
   provides IMotionTriggeredCam theMotionCam;
   requires IInput input;  
