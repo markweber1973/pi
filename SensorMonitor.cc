@@ -17,12 +17,13 @@
 
 
 SensorMonitor::SensorMonitor(const dezyne::locator& dezyne_locator)
-: dzn_meta{"","SensorMonitor",0,{},{[this]{sensorMonitorProvided.check_bindings();},[this]{sensorRequired.check_bindings();}}}
+: dzn_meta{"","SensorMonitor",0,{},{[this]{sensorMonitorProvided.check_bindings();},[this]{sensorRequired.check_bindings();},[this]{ledRequired.check_bindings();}}}
 , dzn_rt(dezyne_locator.get<dezyne::runtime>())
 , dzn_locator(dezyne_locator)
 , state(State::Disabled)
 , sensorMonitorProvided{{{"sensorMonitorProvided",this,&dzn_meta},{"",0,0}}}
 , sensorRequired{{{"",0,0},{"sensorRequired",this,&dzn_meta}}}
+, ledRequired{{{"",0,0},{"ledRequired",this,&dzn_meta}}}
 {
   dzn_rt.performs_flush(this) = true;
   sensorMonitorProvided.in.enable = [&] () { return dezyne::call_in(this, [&]{return sensorMonitorProvided_enable();}, this->sensorMonitorProvided.meta, "enable"); };
